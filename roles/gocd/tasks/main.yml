@@ -1,0 +1,60 @@
+---
+
+- apt_repository:
+    repo: deb https://download.gocd.io /
+    state: present
+    filename: 'gocd.list'
+
+- apt_key:
+    url: "https://download.gocd.io/GOCD-GPG-KEY.asc"
+    state: present
+
+- raw: sudo apt-get update
+
+- name: apt install go-agent
+  sudo: yes
+  apt: pkg=go-agent state=latest force=yes
+    
+- name: Make sure go-agent is running
+  service:
+    name: go-agent
+    state: started
+
+- name: Update GO_SERVER variable with the server IP address
+  lineinfile: dest=/etc/default/go-agent regexp=^GO_SERVER_URL= line=GO_SERVER_URL=https://ec2-54-70-136-53.us-west-2.compute.amazonaws.com:8154/go
+
+- name: restart go-agent
+  service: name=go-agent state=restarted
+  sudo: yes
+
+- name: apt install jq
+  sudo: yes
+  apt: pkg=jq state=latest force=yes
+
+- name: Make sure we have a 'docker' group
+  group:
+    name: docker
+    state: present
+
+- name: Allow 'docker' group to have passwordless sudo
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: '^%docker'
+    line: '%docker ALL=(ALL) NOPASSWD: ALL'
+
+- name: Add go user to docker group
+  user: name=go groups=docker append=yes state=present
+
+- name: restart docker
+  service: name=docker state=restarted
+  sudo: yes
+
+- name: restart go-agent
+  service: name=go-agent state=restarted
+  sudo: yes
+
+- fetch:
+    src: /var/lib/go-agent/config/guid.txt
+    dest: ~/workspace/Perform-Blue-Green-Deployment-Catalog/guid.txt
+    flat: yes
