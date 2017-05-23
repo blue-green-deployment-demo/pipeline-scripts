@@ -3,4 +3,4 @@ echo $var
 var2=ubuntu@${var}
 var3=$(echo $var2 | tr -d ' ')
 echo $var3
-scp -i /opt/jenkins-scripts/AWS_KEY/mandeepingpoc.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $var3:/var/lib/go-agent/config/guid.txt  .
+scp -i /opt/jenkins-scripts/AWS_KEY/mandeepingpoc.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $var3:/var/lib/go-agent/config/guid.txt  ../
