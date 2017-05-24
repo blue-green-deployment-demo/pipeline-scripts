@@ -5,7 +5,7 @@ app_port=$2
 
 app_name=`echo $resource_input | tr '[:lower:]' '[:upper:]'`
 
-existingApp=`curl http://ec2-52-27-69-178.us-west-2.compute.amazonaws.com:8761/eureka/apps -H "Content-Type:application/json" -H "Accept:application/json" | jq '.applications.application[] | .instance[] | select(.app == '\"$app_name\"' and .status == "UP") | "http://ec2-54-70-136-53.us-west-2.compute.amazonaws.com/eureka/apps/"+.app+"/"+.instanceId+"/status?value=DOWN"' | tr -d '\"'`
+existingApp=`curl http://ec2-52-27-69-178.us-west-2.compute.amazonaws.com:8761/eureka/apps -H "Content-Type:application/json" -H "Accept:application/json" | jq '.applications.application[] | .instance[] | select(.app == '\"$app_name\"' and .status == "UP") | "http://ec2-52-27-69-178.us-west-2.compute.amazonaws.com:8761/eureka/apps/"+.app+"/"+.instanceId+"/status?value=DOWN"' | tr -d '\"'`
 echo "Existing App URL = $existingApp"
 
 existAppInstanceId=`curl http://ec2-52-27-69-178.us-west-2.compute.amazonaws.com:8761/apps -H "Content-Type:application/json" -H "Accept:application/json" | jq '.applications.application[] | .instance[] | select(.app == '\"$app_name\"' and .status == "UP") | .instanceId' | tr -d '\"'`
