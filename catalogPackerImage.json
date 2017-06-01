@@ -26,17 +26,30 @@
             "scripts": [
             "installjava.sh"
            ] 
-       },
-       {
-            "type": "shell",
-            "scripts": [
-            "installdocker.sh"
-           ]
        },{
             "type": "shell",
 	    "scripts": [
             "installgocdagent.sh"
 	   ]
-        }
+        },{
+            "type": "shell",
+             "inline": [
+            "sudo chmod 777 /lib/systemd/system/",
+	    "sudo chmod 777 /opt/"
+           ]
+        },{
+	    "type": "file",
+  	    "source": "bluegreen.service",
+	    "destination": "/lib/systemd/system/"
+        },{
+            "type": "file",
+            "source": "installCatalog.sh",
+            "destination": "/opt/"
+        },{
+            "type": "shell",
+             "inline": [
+            "sudo systemctl enable bluegreen.service"
+           ]
+}
     ]
 }

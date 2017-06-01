@@ -11,36 +11,6 @@ echo "Existing App URL = $existingApp"
 existAppInstanceId=`curl http://ec2-52-27-69-178.us-west-2.compute.amazonaws.com:8761/apps -H "Content-Type:application/json" -H "Accept:application/json" | jq '.applications.application[] | .instance[] | select(.app == '\"$app_name\"' and .status == "UP") | .instanceId' | tr -d '\"'`
 
 
-
-CONTAINER=$resource_input
-
-RUNNING=$(docker inspect --format="{{ .State.Running }}" $CONTAINER 2> /dev/null)
-
-docker pull rohitgkk/$CONTAINER
-
-if [ $? -eq 1 ]; then
-  echo "UNKNOWN - $CONTAINER does not exist."
-  docker pull rohitgkk/$CONTAINER
-fi
-
-if [ "$RUNNING" == "true" ]; then
-  echo "$CONTAINER is running"
-  docker stop $CONTAINER
-  docker rm $CONTAINER
-fi
-
-if [ "$RUNNING" == "false" ]; then
-  echo "CRITICAL - $CONTAINER is not running."
-  docker rm $CONTAINER
-fi
-
-echo "CONTAINER ID of $app_name is below:"
-docker run --name $CONTAINER -d -P -e 'SPRING_PROFILES_ACTIVE=aws' -p $app_port:$app_port rohitgkk/$CONTAINER
-
-if [ $? -ne 0 ]; then
-	exit 1
-fi
-
 sleep 30
 
 endFirst=$((SECONDS+140))
