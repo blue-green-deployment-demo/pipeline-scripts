@@ -5,10 +5,10 @@ app_port=$2
 
 app_name=`echo $resource_input | tr '[:lower:]' '[:upper:]'`
 
-existingApp=`curl http://ec2-52-27-69-178.us-west-2.compute.amazonaws.com:8761/eureka/apps -H "Content-Type:application/json" -H "Accept:application/json" | jq '.applications.application[] | .instance[] | select(.app == '\"$app_name\"' and .status == "UP") | "http://ec2-52-27-69-178.us-west-2.compute.amazonaws.com:8761/eureka/apps/"+.app+"/"+.instanceId+"/status?value=DOWN"' | tr -d '\"'`
+existingApp=`curl http://ec2-34-212-100-111.us-west-2.compute.amazonaws.com:8761/eureka/apps -H "Content-Type:application/json" -H "Accept:application/json" | jq '.applications.application[] | .instance[] | select(.app == '\"$app_name\"' and .status == "UP") | "http://ec2-52-27-69-178.us-west-2.compute.amazonaws.com:8761/eureka/apps/"+.app+"/"+.instanceId+"/status?value=DOWN"' | tr -d '\"'`
 echo "Existing App URL = $existingApp"
 
-existAppInstanceId=`curl http://ec2-52-27-69-178.us-west-2.compute.amazonaws.com:8761/apps -H "Content-Type:application/json" -H "Accept:application/json" | jq '.applications.application[] | .instance[] | select(.app == '\"$app_name\"' and .status == "UP") | .instanceId' | tr -d '\"'`
+existAppInstanceId=`curl http://ec2-34-212-100-111.us-west-2.compute.amazonaws.com:8761/eureka/apps -H "Content-Type:application/json" -H "Accept:application/json" | jq '.applications.application[] | .instance[] | select(.app == '\"$app_name\"' and .status == "UP") | .instanceId' | tr -d '\"'`
 
 
 sleep 30
@@ -21,10 +21,10 @@ while [ $SECONDS -lt $endFirst ]; do
 
 
 
-newAppStatus=`curl -s http://ec2-52-27-69-178.us-west-2.compute.amazonaws.com:8761/eureka/apps -H "Content-Type:application/json" -H "Accept:application/json" | jq '.applications.application[] | .instance[] | select(.app == '\"$app_name\"' and .instanceId != '\"$existAppInstanceId\"' and .status == "OUT_OF_SERVICE") | .status' | tr -d '\"'`
+newAppStatus=`curl -s http://ec2-34-212-100-111.us-west-2.compute.amazonaws.com:8761/eureka/apps -H "Content-Type:application/json" -H "Accept:application/json" | jq '.applications.application[] | .instance[] | select(.app == '\"$app_name\"' and .instanceId != '\"$existAppInstanceId\"' and .status == "OUT_OF_SERVICE") | .status' | tr -d '\"'`
 
 
-newAppInstanceId=`curl -s http://ec2-52-27-69-178.us-west-2.compute.amazonaws.com:8761/eureka/apps -H "Content-Type:application/json" -H "Accept:application/json" | jq '.applications.application[] | .instance[] | select(.app == '\"$app_name\"' and .instanceId != '\"$existAppInstanceId\"' and .status == "OUT_OF_SERVICE") | .instanceId' | tr -d '\"'`
+newAppInstanceId=`curl -s http://ec2-34-212-100-111.us-west-2.compute.amazonaws.com:8761/eureka/apps -H "Content-Type:application/json" -H "Accept:application/json" | jq '.applications.application[] | .instance[] | select(.app == '\"$app_name\"' and .instanceId != '\"$existAppInstanceId\"' and .status == "OUT_OF_SERVICE") | .instanceId' | tr -d '\"'`
 
 
 
@@ -40,7 +40,7 @@ if [ "$newAppStatus" == "OUT_OF_SERVICE" ]; then
 
     while [ $SECONDS -lt $endSecond ]; do
      
-    confirmNewAppStatus=`curl -s http://ec2-52-27-69-178.us-west-2.compute.amazonaws.com:8761/eureka/apps/$app_name -H "Content-Type:application/json" -H "Accept:application/json" | jq '.application.instance[] | select(.instanceId == '\"$newAppInstanceId\"') | .status' | tr -d '\"'` 
+    confirmNewAppStatus=`curl -s http://ec2-34-212-100-111.us-west-2.compute.amazonaws.com:8761/eureka/apps/$app_name -H "Content-Type:application/json" -H "Accept:application/json" | jq '.application.instance[] | select(.instanceId == '\"$newAppInstanceId\"') | .status' | tr -d '\"'` 
     
 	if [ "$confirmNewAppStatus" == "UP" ]; then
 	
