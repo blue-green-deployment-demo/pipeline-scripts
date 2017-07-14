@@ -32,7 +32,7 @@ if [ "$newAppStatus" == "OUT_OF_SERVICE" ]; then
     
     echo "Bringing UP green $app_name app url"
     
-    curl -X PUT http://ec2-52-27-69-178.us-west-2.compute.amazonaws.com:8761/eureka/apps/$app_name/$newAppInstanceId/status?value=UP
+    curl -X PUT http://ec2-34-212-100-111.us-west-2.compute.amazonaws.com:8761/eureka/apps/$app_name/$newAppInstanceId/status?value=UP
     sleep 1
     endSecond=$((SECONDS+60))
     
